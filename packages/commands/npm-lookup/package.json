@@ -46,7 +46,7 @@
     "esbuild": "^0.25.9",
     "mcp-funnel": "workspace:^",
     "tsx": "^4.20.5",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.8"
   },
   "packageManager": "yarn@4.9.2"
 }

@@ -42,12 +42,12 @@
     "@modelcontextprotocol/sdk": "^1.18.0",
     "lru-cache": "^11.0.2",
     "micromatch": "^4.0.8",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.8"
   },
   "devDependencies": {
     "@types/micromatch": "^4.0.9",
     "@types/node": "^24.3.1",
-    "esbuild": "^0.25.9",
+    "esbuild": "^0.28.1",
     "mcp-funnel": "workspace:^",
     "tsx": "^4.20.5"
   },

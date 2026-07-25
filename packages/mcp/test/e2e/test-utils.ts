@@ -1,4 +1,4 @@
-import { query, type SDKUserMessage, type SDKMessage } from '@anthropic-ai/claude-code';
+import { query, type SDKUserMessage, type SDKMessage } from '@anthropic-ai/claude-agent-sdk';
 import { spawn, type ChildProcess } from 'child_process';
 import { randomUUID } from 'crypto';
 import * as fs from 'fs/promises';

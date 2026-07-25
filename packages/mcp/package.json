@@ -56,7 +56,7 @@
     "zod": "^4.1.8"
   },
   "devDependencies": {
-    "@anthropic-ai/claude-code": "^1.0.128",
+    "@anthropic-ai/claude-code": "^2.1.163",
     "@hono/zod-validator": "^0.7.2",
     "@types/express": "^5.0.0",
     "@types/node": "^24.3.1",

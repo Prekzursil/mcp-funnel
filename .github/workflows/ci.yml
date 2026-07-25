@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - develop
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  COREPACK_ENABLE_DOWNLOAD_PROMPT: '0'
+
+jobs:
+  build:
+    name: install + build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      # Actions are pinned to a commit SHA (not a floating tag) so a compromised
+      # or retagged release cannot silently change what runs in this workflow.
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node.js 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+
+      # Must run after setup-node so the shims are created for the Node that
+      # setup-node put on PATH. Activates yarn 4.9.2 from package.json
+      # "packageManager".
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Report toolchain versions
+        run: |
+          node --version
+          yarn --version
+
+      # --immutable fails the job if yarn.lock is out of sync with any
+      # package.json, or if a dependency PR forgot to update the lockfile.
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      # Catches the failure mode this gate exists for: a dependency bump that
+      # type-checks or compiles cleanly on its own but breaks a workspace build.
+      - name: Build all workspaces
+        run: yarn build
+
+      # NOTE: `yarn test` is deliberately NOT part of this gate yet. The develop
+      # baseline is currently red (23 tests fail deterministically, plus ~9
+      # flaky), so a test gate would fail on arrival and be routed around.
+      # Adding it is a follow-up once develop is green -- see the PR body.

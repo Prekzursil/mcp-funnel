@@ -1,6 +1,6 @@
 /* eslint-disable max-lines */
 import { describe, expect, test } from 'vitest';
-import { query, type SDKUserMessage, type SDKMessage } from '@anthropic-ai/claude-code';
+import { query, type SDKUserMessage, type SDKMessage } from '@anthropic-ai/claude-agent-sdk';
 import { randomUUID } from 'crypto';
 import * as path from 'path';
 import { fileURLToPath } from 'url';

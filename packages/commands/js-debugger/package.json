@@ -57,7 +57,7 @@
     "@types/source-map": "^0.5.7",
     "@types/ws": "^8.18.1",
     "devtools-protocol": "^0.0.1521046",
-    "esbuild": "^0.25.9",
+    "esbuild": "^0.28.1",
     "playwright": "^1.49.2",
     "tsx": "^4.20.5",
     "vitest": "^3.2.4"

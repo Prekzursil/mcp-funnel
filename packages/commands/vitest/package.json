@@ -47,7 +47,7 @@
   "devDependencies": {
     "@types/micromatch": "^4.0.9",
     "@types/node": "^24.3.1",
-    "esbuild": "^0.25.9",
+    "esbuild": "^0.28.1",
     "mcp-funnel": "workspace:^",
     "tsx": "^4.20.5"
   },

@@ -35,15 +35,15 @@
     "release": "yarn npm audit && yarn pack -o out/out.tgz && npm publish --access public ./out/out.tgz"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.18.0",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "zod": "^4.1.11"
   },
   "devDependencies": {
     "@types/node": "^24.5.2",
-    "esbuild": "^0.25.10",
+    "esbuild": "^0.28.1",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.10"
   },
   "packageManager": "yarn@4.9.2"
 }

@@ -51,22 +51,22 @@
     "rfdc": "^1.4.1",
     "safe-stable-stringify": "^2.5.0",
     "smol-toml": "^1.4.2",
-    "uuid": "^13.0.0",
+    "uuid": "^14.0.1",
     "ws": "^8.18.3",
     "zod": "^4.1.8"
   },
   "devDependencies": {
-    "@anthropic-ai/claude-code": "^1.0.128",
+    "@anthropic-ai/claude-code": "^2.1.220",
     "@hono/zod-validator": "^0.7.2",
     "@types/express": "^5.0.0",
     "@types/node": "^24.3.1",
     "@types/ws": "^8.18.1",
-    "esbuild": "^0.25.9",
+    "esbuild": "^0.28.1",
     "globby": "^14.1.0",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.10"
   },
   "packageManager": "yarn@4.9.2"
 }

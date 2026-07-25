@@ -29,7 +29,7 @@
     "clean": "yarn workspaces foreach -Atp exec rimraf dist"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.18.0",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "zod": "^4.1.8"
   },
   "devDependencies": {
@@ -52,7 +52,7 @@
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.43.0",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.10"
   },
   "prettier": {
     "trailingComma": "all",

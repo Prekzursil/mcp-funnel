@@ -35,7 +35,7 @@
     "release": "yarn npm audit && yarn pack -o out/out.tgz && npm publish --access public ./out/out.tgz"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.18.0",
+    "@modelcontextprotocol/sdk": "^1.26.0",
     "zod": "^4.1.11"
   },
   "devDependencies": {

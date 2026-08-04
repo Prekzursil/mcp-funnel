@@ -29,7 +29,7 @@
     "clean": "yarn workspaces foreach -Atp exec rimraf dist"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.18.0",
+    "@modelcontextprotocol/sdk": "^1.26.0",
     "zod": "^4.1.8"
   },
   "devDependencies": {

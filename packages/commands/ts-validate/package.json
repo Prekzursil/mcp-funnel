@@ -44,7 +44,7 @@
     "chalk": "^5.3.0",
     "eslint": "^9.10.0",
     "globby": "^14.0.0",
-    "minimatch": "^10.0.3",
+    "minimatch": "^11.0.1",
     "prettier": "^3.1.0",
     "semver": "^7.6.3",
     "typescript": "^5.9.2"

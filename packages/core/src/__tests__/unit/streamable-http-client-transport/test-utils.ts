@@ -9,10 +9,12 @@ import type { JSONRPCRequest, JSONRPCResponse } from '@modelcontextprotocol/sdk/
 import { v4 as uuidv4 } from 'uuid';
 
 // Mock auth provider interface
+// vitest 4's unparameterized Mock<Procedure | Constructable> no longer satisfies
+// call signatures, so the mocks are typed with the IAuthProvider member shapes.
 export interface MockAuthProvider {
-  getHeaders: ReturnType<typeof vi.fn>;
-  refresh?: ReturnType<typeof vi.fn>;
-  isValid: ReturnType<typeof vi.fn>;
+  getHeaders: ReturnType<typeof vi.fn<() => Promise<Record<string, string>>>>;
+  refresh?: ReturnType<typeof vi.fn<() => Promise<void>>>;
+  isValid: ReturnType<typeof vi.fn<() => Promise<boolean>>>;
 }
 
 // Create a factory for the mock SDK transport to ensure each test gets a fresh instance

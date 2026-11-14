@@ -193,8 +193,10 @@ function generateRemoteConfig(server: RegistryServer, remote: Remote): ConfigGen
  */
 export class RegistryContext {
   public static instance: RegistryContext | null = null;
-  private serverDetailsMock = vi.fn();
-  private generateInstallInfoMock = vi.fn();
+  // vitest 4's unparameterized vi.fn() infers Mock<Procedure | Constructable>,
+  // which is not callable; type the mocks with their procedure signatures.
+  private serverDetailsMock = vi.fn<(registryId: string) => Promise<RegistryServer | null>>();
+  private generateInstallInfoMock = vi.fn<(server: RegistryServer) => Promise<RegistryInstallInfo>>();
 
   public static getInstance(_config?: ProxyConfig): RegistryContext {
     if (!RegistryContext.instance) {
@@ -248,12 +250,12 @@ export class RegistryContext {
   }
 
   // Internal method for tests to control the mock behavior
-  public _setServerDetailsMock(mock: ReturnType<typeof vi.fn>): void {
+  public _setServerDetailsMock(mock: typeof RegistryContext.prototype.serverDetailsMock): void {
     this.serverDetailsMock = mock;
   }
 
   // Internal method for tests to control the generateInstallInfo mock
-  public _setGenerateInstallInfoMock(mock: ReturnType<typeof vi.fn>): void {
+  public _setGenerateInstallInfoMock(mock: typeof RegistryContext.prototype.generateInstallInfoMock): void {
     this.generateInstallInfoMock = mock;
   }
 }

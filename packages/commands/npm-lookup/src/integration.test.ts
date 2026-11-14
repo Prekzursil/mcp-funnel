@@ -254,7 +254,7 @@ describe.skipIf(!runIntegrationTests)('NPM Registry Integration Tests', () => {
         expect(result.content).toHaveLength(2);
         expect(result.content[0].type).toBe('text');
 
-        const content = result.content[0].text;
+        const content = (result.content[0] as { text: string }).text;
         expect(content).toContain('"name": "lodash"');
         expect(content).toContain('"version"');
         expect(content).toContain('"description"');
@@ -275,7 +275,7 @@ describe.skipIf(!runIntegrationTests)('NPM Registry Integration Tests', () => {
         expect(result.content).toHaveLength(1);
         expect(result.content[0].type).toBe('text');
 
-        const content = result.content[0].text;
+        const content = (result.content[0] as { text: string }).text;
         expect(content).toContain('"results"');
         expect(content).toContain('"total"');
 
@@ -299,8 +299,8 @@ describe.skipIf(!runIntegrationTests)('NPM Registry Integration Tests', () => {
         expect(result.isError).toBe(true);
         expect(result.content).toHaveLength(1);
         expect(result.content[0].type).toBe('text');
-        expect(result.content[0].text).toContain('not found');
-        expect(result.content[0].text).toContain(nonExistentPackage);
+        expect((result.content[0] as { text: string }).text).toContain('not found');
+        expect((result.content[0] as { text: string }).text).toContain(nonExistentPackage);
       }, 10000);
 
       it('should maintain consistency between direct client and MCP execution', async () => {
@@ -316,7 +316,7 @@ describe.skipIf(!runIntegrationTests)('NPM Registry Integration Tests', () => {
         });
 
         expect(mcpResult.isError).toBeUndefined();
-        const parsedMcpResult = JSON.parse(mcpResult.content[0].text as string);
+        const parsedMcpResult = JSON.parse((mcpResult.content[0] as { text: string }).text);
 
         // Results should be identical
         expect(parsedMcpResult).toEqual(directResult);
@@ -333,7 +333,7 @@ describe.skipIf(!runIntegrationTests)('NPM Registry Integration Tests', () => {
         });
 
         expect(result.isError).toBeUndefined();
-        expect(result.content[0].text).toContain('"name": "moment"');
+        expect((result.content[0] as { text: string }).text).toContain('"name": "moment"');
       }, 10000);
     });
   });

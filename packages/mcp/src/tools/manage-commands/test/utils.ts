@@ -155,7 +155,7 @@ export interface CreateMockToolRegistryOptions {
     discovered?: boolean;
   }>;
   /** Mock implementation for hotReloadCommand */
-  hotReloadCommand?: ReturnType<typeof vi.fn>;
+  hotReloadCommand?: ReturnType<typeof vi.fn<(command: ICommand) => void>>;
 }
 
 /**
@@ -188,7 +188,7 @@ export function createMockToolRegistry(
       ];
 
   return {
-    hotReloadCommand: hotReloadCommand ?? vi.fn(),
+    hotReloadCommand: hotReloadCommand ?? vi.fn<(command: ICommand) => void>(),
     getAllTools: vi.fn().mockReturnValue(defaultTools),
   } satisfies Pick<ToolRegistry, 'hotReloadCommand' | 'getAllTools'>;
 }

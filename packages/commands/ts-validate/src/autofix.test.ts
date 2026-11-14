@@ -50,7 +50,7 @@ describe('MCP autoFix behavior', () => {
       // autoFix omitted to rely on default true
     });
     expect(res.content).toBeDefined();
-    const txt = res.content![0].text as string;
+    const txt = (res.content![0] as { text: string }).text;
     const payload = JSON.parse(txt);
     // With compact default, info-only results will still list the file
     const keys = Object.keys(payload.fileResults);
@@ -73,7 +73,7 @@ describe('MCP autoFix behavior', () => {
       compact: false,
     });
     expect(res.content).toBeDefined();
-    const txt = res.content![0].text as string;
+    const txt = (res.content![0] as { text: string }).text;
     const payload = JSON.parse(txt);
     expect(Array.isArray(payload.fileResults[file])).toBe(true);
     const msgs: { tool: string; message: string; severity: string }[] = payload.fileResults[file];

@@ -34,9 +34,11 @@ vi.mock('../../../logger.js', async (importOriginal) => {
 describe('WebSocket Authentication Handshake', () => {
   let transport: WebSocketClientTransport;
   let mockAuthProvider: {
-    getHeaders: ReturnType<typeof vi.fn>;
-    refresh?: ReturnType<typeof vi.fn>;
-    isValid: ReturnType<typeof vi.fn>;
+    // vitest 4's unparameterized Mock<Procedure | Constructable> no longer
+    // satisfies call signatures; type the mocks with the member shapes.
+    getHeaders: ReturnType<typeof vi.fn<() => Promise<Record<string, string>>>>;
+    refresh?: ReturnType<typeof vi.fn<() => Promise<void>>>;
+    isValid: ReturnType<typeof vi.fn<() => Promise<boolean>>>;
   };
   let mockWs: MockWebSocket;
   let uuidCounter = 0;

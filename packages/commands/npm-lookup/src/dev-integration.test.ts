@@ -170,7 +170,7 @@ describe('Command Integration', () => {
       expect(lookupResult.isError).toBeUndefined();
 
       // Parse the returned JSON to verify structure
-      const lookupData = JSON.parse(lookupResult.content[0].text as string);
+      const lookupData = JSON.parse((lookupResult.content[0] as { text: string }).text);
       expect(lookupData.name).toBe('react');
       expect(lookupData.version).toBe('18.2.0');
       expect(lookupData.description).toContain('React is a JavaScript library');
@@ -186,7 +186,7 @@ describe('Command Integration', () => {
       expect(searchResult.isError).toBeUndefined();
 
       // Parse the returned JSON to verify structure
-      const searchData = JSON.parse(searchResult.content[0].text as string);
+      const searchData = JSON.parse((searchResult.content[0] as { text: string }).text);
       expect(searchData.results).toBeInstanceOf(Array);
       expect(searchData.results[0].name).toBe('react');
       expect(searchData.total).toBe(1);
@@ -278,7 +278,7 @@ describe('Command Integration', () => {
       });
 
       expect(lookupResult.isError).toBe(true);
-      expect(lookupResult.content[0].text).toContain('Unexpected error: Network error');
+      expect((lookupResult.content[0] as { text: string }).text).toContain('Unexpected error: Network error');
 
       // Test error handling for search
       const searchResult = await npmCommand.executeToolViaMCP('search', {
@@ -286,7 +286,7 @@ describe('Command Integration', () => {
       });
 
       expect(searchResult.isError).toBe(true);
-      expect(searchResult.content[0].text).toContain('Unexpected error: Search failed');
+      expect((searchResult.content[0] as { text: string }).text).toContain('Unexpected error: Search failed');
     });
 
     it('should validate tool parameters correctly', async () => {
@@ -295,12 +295,12 @@ describe('Command Integration', () => {
       // Test missing required parameter for lookup
       const lookupResult = await npmCommand.executeToolViaMCP('lookup', {});
       expect(lookupResult.isError).toBe(true);
-      expect(lookupResult.content[0].text).toBe('Error: packageName parameter must be a string');
+      expect((lookupResult.content[0] as { text: string }).text).toBe('Error: packageName parameter must be a string');
 
       // Test missing required parameter for search
       const searchResult = await npmCommand.executeToolViaMCP('search', {});
       expect(searchResult.isError).toBe(true);
-      expect(searchResult.content[0].text).toBe('Error: query parameter must be a string');
+      expect((searchResult.content[0] as { text: string }).text).toBe('Error: query parameter must be a string');
 
       // Test invalid limit parameter for search
       const searchWithInvalidLimit = await npmCommand.executeToolViaMCP('search', {
@@ -308,14 +308,14 @@ describe('Command Integration', () => {
         limit: 100, // Exceeds max limit
       });
       expect(searchWithInvalidLimit.isError).toBe(true);
-      expect(searchWithInvalidLimit.content[0].text).toBe(
+      expect((searchWithInvalidLimit.content[0] as { text: string }).text).toBe(
         'Error: limit must be a number between 1 and 50',
       );
 
       // Test unknown tool
       const unknownToolResult = await npmCommand.executeToolViaMCP('unknown', {});
       expect(unknownToolResult.isError).toBe(true);
-      expect(unknownToolResult.content[0].text).toBe('Error: Unknown tool: unknown');
+      expect((unknownToolResult.content[0] as { text: string }).text).toBe('Error: Unknown tool: unknown');
     });
   });
 });

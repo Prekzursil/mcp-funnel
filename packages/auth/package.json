@@ -29,6 +29,6 @@
   },
   "dependencies": {
     "@mcp-funnel/core": "workspace:*",
-    "zod": "^4.1.8"
+    "zod": "^4.6.6"
   }
 }

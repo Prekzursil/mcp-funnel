@@ -105,7 +105,7 @@ describe('NPMCommand', () => {
         });
 
         expect(mockClient.getPackage).toHaveBeenCalledWith('lodash');
-        expect(result.content[0].text).toContain('"name": "lodash"');
+        expect((result.content[0] as { text: string }).text).toContain('"name": "lodash"');
         expect(result.isError).toBeUndefined();
       });
 
@@ -113,7 +113,7 @@ describe('NPMCommand', () => {
         const result = await command.executeToolViaMCP('lookup', {});
 
         expect(result.isError).toBe(true);
-        expect(result.content[0].text).toContain('packageName parameter must be a string');
+        expect((result.content[0] as { text: string }).text).toContain('packageName parameter must be a string');
       });
 
       it('should return error for invalid packageName parameter type', async () => {
@@ -122,7 +122,7 @@ describe('NPMCommand', () => {
         });
 
         expect(result.isError).toBe(true);
-        expect(result.content[0].text).toContain('packageName parameter must be a string');
+        expect((result.content[0] as { text: string }).text).toContain('packageName parameter must be a string');
       });
     });
 
@@ -135,7 +135,7 @@ describe('NPMCommand', () => {
         });
 
         expect(mockClient.searchPackages).toHaveBeenCalledWith('lodash', undefined);
-        expect(result.content[0].text).toContain('"name": "lodash"');
+        expect((result.content[0] as { text: string }).text).toContain('"name": "lodash"');
         expect(result.isError).toBeUndefined();
       });
 
@@ -155,7 +155,7 @@ describe('NPMCommand', () => {
         const result = await command.executeToolViaMCP('search', {});
 
         expect(result.isError).toBe(true);
-        expect(result.content[0].text).toContain('query parameter must be a string');
+        expect((result.content[0] as { text: string }).text).toContain('query parameter must be a string');
       });
 
       it('should return error for invalid limit parameter', async () => {
@@ -165,7 +165,7 @@ describe('NPMCommand', () => {
         });
 
         expect(result.isError).toBe(true);
-        expect(result.content[0].text).toContain('limit must be a number between 1 and 50');
+        expect((result.content[0] as { text: string }).text).toContain('limit must be a number between 1 and 50');
       });
 
       it('should return error for out of range limit', async () => {
@@ -175,7 +175,7 @@ describe('NPMCommand', () => {
         });
 
         expect(result.isError).toBe(true);
-        expect(result.content[0].text).toContain('limit must be a number between 1 and 50');
+        expect((result.content[0] as { text: string }).text).toContain('limit must be a number between 1 and 50');
       });
     });
 
@@ -183,7 +183,7 @@ describe('NPMCommand', () => {
       const result = await command.executeToolViaMCP('unknown', {});
 
       expect(result.isError).toBe(true);
-      expect(result.content[0].text).toContain('Unknown tool: unknown');
+      expect((result.content[0] as { text: string }).text).toContain('Unknown tool: unknown');
     });
   });
 

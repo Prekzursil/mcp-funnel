@@ -1,12 +1,12 @@
 import { type InstalledCommand, readManifest } from '@mcp-funnel/commands-core';
 import type { CommandInstallerContext } from '../types/index.js';
 import { promisify } from 'util';
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { join } from 'path';
 import * as fs from 'node:fs/promises';
 import { writeManifest } from './writeManifest.js';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 /**
  * Updates an installed command package to its latest version.
@@ -55,7 +55,7 @@ export async function update(
 
   try {
     // Update using npm
-    await execAsync(`npm update "${command.package}"`, {
+    await execFileAsync('npm', ['update', command.package], {
       cwd: context.packagesDir,
     });
 

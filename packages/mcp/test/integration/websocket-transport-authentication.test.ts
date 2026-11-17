@@ -175,13 +175,12 @@ describe.skipIf(!runIntegrationTests)('WebSocket Transport Authentication Integr
       });
 
       // Should fail to connect due to authentication
-      let _connectionError: Error | undefined;
       try {
         await transport.start();
         // Wait a bit to see if connection fails
         await new Promise((resolve) => setTimeout(resolve, 2000));
       } catch (error) {
-        _connectionError = error as Error;
+        void error; // the error object is intentionally swallowed here
       }
 
       // Either should throw immediately or connection should fail

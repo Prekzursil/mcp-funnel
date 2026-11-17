@@ -5,7 +5,12 @@ import { join } from 'path';
 import { homedir } from 'os';
 import { logEvent, ValidationUtils } from '@mcp-funnel/core';
 import type { ITokenStorage, TokenData } from '@mcp-funnel/core';
-import { getFilename, parseStoredToken, serializeToken } from './util/keychain-utils.js';
+import {
+  getFilename,
+  getLegacyFilename,
+  parseStoredToken,
+  serializeToken,
+} from './util/keychain-utils.js';
 
 const execFileAsync = promisify(execFile);
 
@@ -276,6 +281,11 @@ export class KeychainTokenStorage implements ITokenStorage {
     // Write file with user-only permissions
     await fs.writeFile(filepath, value, { mode: 0o600 });
 
+    // Migration: drop the legacy (pre-scrypt) file if it exists so the old
+    // derivation stops shadowing the new one on future reads.
+    const legacyFilepath = join(this.fallbackDir, getLegacyFilename(key));
+    await fs.unlink(legacyFilepath).catch(() => undefined);
+
     logEvent('debug', 'auth:token_stored_file', {
       serverId: this.serverId,
       filepath: filepath,
@@ -290,10 +300,17 @@ export class KeychainTokenStorage implements ITokenStorage {
    * @internal
    */
   private async retrieveFromFile(key: string): Promise<string> {
-    const filename = getFilename(key);
-    const filepath = join(this.fallbackDir, filename);
+    const filepath = join(this.fallbackDir, getFilename(key));
 
-    const value = await fs.readFile(filepath, 'utf8');
+    let value: string;
+    try {
+      value = await fs.readFile(filepath, 'utf8');
+    } catch {
+      // Fall back to the legacy (pre-scrypt) derivation once: tokens stored
+      // before the KDF migration stay readable.
+      const legacyFilepath = join(this.fallbackDir, getLegacyFilename(key));
+      value = await fs.readFile(legacyFilepath, 'utf8');
+    }
     return value.trim();
   }
 
@@ -304,11 +321,12 @@ export class KeychainTokenStorage implements ITokenStorage {
    * @internal
    */
   private async removeFromFile(key: string): Promise<void> {
-    const filename = getFilename(key);
-    const filepath = join(this.fallbackDir, filename);
+    const filepath = join(this.fallbackDir, getFilename(key));
+    const legacyFilepath = join(this.fallbackDir, getLegacyFilename(key));
 
     try {
       await fs.unlink(filepath);
+      await fs.unlink(legacyFilepath);
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
         throw error;

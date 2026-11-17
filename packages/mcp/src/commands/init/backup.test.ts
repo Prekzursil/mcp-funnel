@@ -35,19 +35,13 @@ describe('createBackup', () => {
     expect(backupPath).toBeTruthy();
     expect(backupPath).toMatch(/\.backup\.\d+$/);
 
-    // Check that backup was created
-    const backupExists = await fs.access(backupPath!).then(
-      () => true,
-      () => false,
-    );
-    expect(backupExists).toBe(true);
-
     // Check that timestamp is in expected range
     const timestamp = parseInt(backupPath!.split('.').pop()!);
     expect(timestamp).toBeGreaterThanOrEqual(before);
     expect(timestamp).toBeLessThanOrEqual(after);
 
-    // Check that backup contains same content
+    // Read directly: a separate existence check can be invalidated between
+    // check and read (TOCTOU); a failed read fails the test just as hard.
     const backupContent = await fs.readFile(backupPath!, 'utf8');
     expect(backupContent).toBe(testContent);
   });

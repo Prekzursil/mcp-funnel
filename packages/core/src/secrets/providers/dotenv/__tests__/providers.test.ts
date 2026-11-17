@@ -1,6 +1,6 @@
 /* eslint-disable max-lines */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { writeFileSync, mkdirSync, rmSync } from 'fs';
+import { writeFileSync, mkdtempSync, mkdirSync, rmSync } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { DotEnvProvider } from '../index.js';
@@ -11,11 +11,7 @@ import { DotEnvProvider } from '../index.js';
  * @returns Path to the created test directory
  */
 function createTestDirectory(): string {
-  const testDir = join(
-    tmpdir(),
-    `providers-real-test-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-  );
-  mkdirSync(testDir, { recursive: true });
+  const testDir = mkdtempSync(join(tmpdir(), 'providers-real-test-'));
   return testDir;
 }
 

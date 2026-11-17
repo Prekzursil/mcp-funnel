@@ -268,7 +268,7 @@ export class MonorepoValidator {
       });
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
-      const isNoConfig = /no eslint configuration|couldn['']t find a configuration/i.test(msg);
+      const isNoConfig = /no eslint configuration|couldn['’]t find a configuration/i.test(msg);
       toolStatuses.push(
         isNoConfig
           ? { tool: 'eslint', status: 'skipped', reason: 'no-eslint-config' }

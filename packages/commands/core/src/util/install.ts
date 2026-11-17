@@ -11,9 +11,9 @@ import { join } from 'path';
 import { promises as fs } from 'fs';
 import { writeManifest } from './writeManifest.js';
 import { promisify } from 'util';
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 /**
  * Installs a command package from npm registry to the isolated packages directory.
@@ -81,7 +81,7 @@ export async function install(
 
   try {
     // Install the package using npm
-    const { stderr } = await execAsync(`npm install --save "${installSpec}"`, {
+    const { stderr } = await execFileAsync('npm', ['install', '--save', installSpec], {
       cwd: context.packagesDir,
     });
 
@@ -105,7 +105,7 @@ export async function install(
 
     if (!command) {
       // Rollback installation
-      await execAsync(`npm uninstall "${resolvedPackageName}"`, {
+      await execFileAsync('npm', ['uninstall', resolvedPackageName], {
         cwd: context.packagesDir,
       });
       throw new Error(

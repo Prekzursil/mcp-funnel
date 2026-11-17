@@ -86,10 +86,14 @@ export class EnvVarPatternResolver {
       throw EnvironmentResolutionError.maxDepthExceeded(this.maxDepth);
     }
 
-    // Pattern: \$\{VAR_NAME\} or \$\{VAR_NAME:default_value\}
-    const envPattern = /\$\{([A-Z_][A-Z0-9_]*)(?::([^}]*))?\}/gi;
+    // Pattern: \$\{VAR_NAME\} or \$\{VAR_NAME:default_value\}.
+    // Two unambiguous alternatives instead of one pattern with a star followed
+    // by an optional group (polylinear backtracking - js/polynomial-redos).
+    const envPattern = /\$\{([A-Z_][A-Z0-9_]*):([^}]*)\}|\$\{([A-Z_][A-Z0-9_]*)\}/g;
 
-    return value.replace(envPattern, (match, varName: string, defaultValue?: string) => {
+    return value.replace(envPattern, (match, withDefaultName, withDefaultValue, bareName) => {
+      const varName = (bareName ?? withDefaultName) as string;
+      const defaultValue = bareName !== undefined ? undefined : withDefaultValue;
       // Security: Validate variable name to prevent injection
       if (!this.isValidVariableName(varName)) {
         throw EnvironmentResolutionError.invalidPattern(match);
@@ -145,7 +149,8 @@ export class EnvVarPatternResolver {
    * @public
    */
   public static containsPattern(value: string): boolean {
-    return /\$\{[A-Z_][A-Z0-9_]*(?::[^}]*)?\}/i.test(value);
+    // Unambiguous alternatives only (see resolveValue): no star-then-optional-group.
+    return /\$\{[A-Z_][A-Z0-9_]*:[^}]*\}|\$\{[A-Z_][A-Z0-9_]*\}/.test(value);
   }
 
   /**

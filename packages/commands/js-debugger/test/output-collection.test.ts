@@ -234,9 +234,8 @@ describe('Output Collection', () => {
 
       const allEntries: OutputEntry[] = [];
       let cursor = 0;
-      let hasMore = true;
 
-      while (hasMore) {
+      for (;;) {
         const result = await manager.queryOutput({
           sessionId,
           since: cursor,
@@ -245,9 +244,8 @@ describe('Output Collection', () => {
 
         allEntries.push(...result.entries);
         cursor = result.nextCursor;
-        hasMore = result.hasMore;
 
-        if (!hasMore || result.entries.length === 0) break;
+        if (!result.hasMore || result.entries.length === 0) break;
       }
 
       expect(allEntries.length).toBeGreaterThan(0);

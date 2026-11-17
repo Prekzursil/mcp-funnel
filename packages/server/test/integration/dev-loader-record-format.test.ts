@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { readFileSync, existsSync, writeFileSync, unlinkSync, mkdirSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 
 // We need to test the loadConfig function from dev.ts
@@ -63,8 +63,7 @@ describe('Dev Loader - Record Format Integration', () => {
 
   beforeEach(() => {
     // Create temporary directory for test config files
-    testConfigDir = resolve(tmpdir(), `mcp-funnel-test-${Date.now()}`);
-    mkdirSync(testConfigDir, { recursive: true });
+    testConfigDir = mkdtempSync(join(tmpdir(), 'mcp-funnel-test-'));
     testConfigPath = resolve(testConfigDir, '.mcp-funnel.json');
 
     // Backup original env

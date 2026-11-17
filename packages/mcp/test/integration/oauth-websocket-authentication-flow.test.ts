@@ -268,13 +268,12 @@ describe.skipIf(!runIntegrationTests)('OAuth + WebSocket Authentication Flow Int
       });
 
       // Should fail during OAuth token acquisition
-      let _authError: Error | undefined;
       try {
         await transport.start();
         // Wait a bit for the authentication to fail
         await new Promise((resolve) => setTimeout(resolve, 1000));
       } catch (error) {
-        _authError = error as Error;
+        void error; // the error object is intentionally swallowed here
       }
 
       // The WebSocket transport may start successfully but fail authentication

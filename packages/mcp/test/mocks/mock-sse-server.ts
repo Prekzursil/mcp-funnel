@@ -257,6 +257,24 @@ export class MockSSEServer {
       app.use((req, res, next) => setTimeout(next, this.config.simulateLatency));
     }
 
+    // Fixed-window limiter: the mock accepts bounded request rates only
+    // (js/missing-rate-limiting) instead of unbounded firehose acceptance.
+    let hits = 0;
+    let windowStart = Date.now();
+    app.use((req, res, next) => {
+      const now = Date.now();
+      if (now - windowStart >= 1000) {
+        windowStart = now;
+        hits = 0;
+      }
+      hits += 1;
+      if (hits > 1000) {
+        res.status(429).json({ error: 'rate limited' });
+        return;
+      }
+      next();
+    });
+
     // SSE endpoint
     app.get('/events', this.handleSSEConnection.bind(this));
 

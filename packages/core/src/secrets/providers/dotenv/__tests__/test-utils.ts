@@ -1,4 +1,4 @@
-import { writeFileSync, mkdirSync, rmSync } from 'fs';
+import {writeFileSync, mkdtempSync, rmSync} from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
 
@@ -8,11 +8,7 @@ import { tmpdir } from 'os';
  * @returns Absolute path to the created temporary directory
  */
 export function createTestDirectory(): string {
-  const testDir = join(
-    tmpdir(),
-    `providers-real-test-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-  );
-  mkdirSync(testDir, { recursive: true });
+  const testDir = mkdtempSync(join(tmpdir(), 'providers-real-test-'));
   return testDir;
 }
 

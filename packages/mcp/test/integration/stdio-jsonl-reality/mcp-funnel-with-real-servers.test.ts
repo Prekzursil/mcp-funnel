@@ -120,7 +120,10 @@ describe('MCP Funnel with Real Servers', () => {
 
     // Verify that hideTools pattern would match these tools
     const shouldBeHidden = config.hideTools?.some((pattern) => {
-      const regex = new RegExp('^' + pattern.replace('*', '.*') + '$');
+      // Escape every regex metacharacter first, then let the escaped '*'
+      // become the only wildcard: unescaped input stays injectable.
+      const escaped = pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*');
+      const regex = new RegExp('^' + escaped + '$');
       return regex.test('server1__alpha_error');
     });
     expect(shouldBeHidden).toBe(true);

@@ -1,6 +1,6 @@
 /* eslint-disable max-lines */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { writeFileSync, mkdirSync, rmSync } from 'fs';
+import {writeFileSync, mkdtempSync, rmSync} from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { SecretManager } from './secret-manager.js';
@@ -15,11 +15,7 @@ import { InlineProvider } from './inline-provider.js';
  * @returns Absolute path to created directory
  */
 function createTestDirectory(): string {
-  const testDir = join(
-    tmpdir(),
-    `integration-test-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-  );
-  mkdirSync(testDir, { recursive: true });
+  const testDir = mkdtempSync(join(tmpdir(), 'integration-test-'));
   return testDir;
 }
 

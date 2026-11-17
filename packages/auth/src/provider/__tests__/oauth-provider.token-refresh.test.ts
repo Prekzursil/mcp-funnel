@@ -110,7 +110,6 @@ describe('OAuthProvider - Token Request (Refresh Token Grant)', () => {
 
   it('rotates the refresh token when rotation is required', async () => {
     const { storage, consentService, config } = context;
-    let oauthProvider = context.oauthProvider;
     await storage.clear();
     await consentService.clear();
 

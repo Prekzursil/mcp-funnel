@@ -101,12 +101,11 @@ describe.skipIf(!runIntegrationTests)('SSE Connection Management Integration', (
       });
 
       // Should handle connection failure gracefully
-      let _networkError: Error | undefined;
       try {
         await transport.start();
         await new Promise((resolve) => setTimeout(resolve, 2000));
       } catch (error) {
-        _networkError = error as Error;
+        void error; // the error object is intentionally swallowed here
       }
 
       // Either should throw or handle gracefully

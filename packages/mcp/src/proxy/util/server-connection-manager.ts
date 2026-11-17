@@ -208,7 +208,6 @@ export class ServerConnectionManager {
         await this.connectToSingleServer(targetServer);
         return { name: targetServer.name, status: 'connected' as const };
       } catch (error) {
-        console.error(`[proxy] Failed to connect to ${targetServer.name}:`, error);
         logError('connection-failed', error, {
           name: targetServer.name,
           command: targetServer.command,

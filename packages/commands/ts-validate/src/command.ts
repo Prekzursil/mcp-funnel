@@ -67,9 +67,7 @@ export class TsValidateCommand implements ICommand {
     const result = await validator.validate(options);
 
     // Compact fileResults by default: include only files with results
-    let out: ValidationSummary & { processedFiles?: string[] } = result as ValidationSummary & {
-      processedFiles?: string[];
-    };
+    let out: ValidationSummary & { processedFiles?: string[] };
     if (compact) {
       const compacted: FileValidationResults = {};
       for (const [file, list] of Object.entries(result.fileResults)) {

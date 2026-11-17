@@ -242,13 +242,12 @@ describe.skipIf(!runIntegrationTests)('OAuth + SSE Authentication Flow Integrati
       });
 
       // Should fail during OAuth token acquisition
-      let _authError: Error | undefined;
       try {
         await transport.start();
         // Wait a bit for the authentication to fail
         await new Promise((resolve) => setTimeout(resolve, 1000));
       } catch (error) {
-        _authError = error as Error;
+        void error; // the error object is intentionally swallowed here
       }
 
       // The SSE transport may start successfully but fail authentication asynchronously

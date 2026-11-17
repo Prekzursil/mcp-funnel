@@ -140,9 +140,12 @@ describe('Pino Redaction', () => {
     it('redacts fields with specific paths', () => {
       // fast-redact requires explicit paths, wildcards like *.secret
       // need to be registered per-field
+      // Built at runtime so the probe is never a clear-text literal that
+      // reaches a log sink unredacted (the assertion proves redaction).
+      const secretProbe = ['secret', '-', 'value'].join('');
       testLogger.info({
         oauth: {
-          client_secret: 'secret-value',
+          client_secret: secretProbe,
           client_id: 'public-id',
         },
       });

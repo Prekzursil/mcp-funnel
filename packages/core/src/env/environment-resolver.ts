@@ -86,46 +86,80 @@ export class EnvVarPatternResolver {
       throw EnvironmentResolutionError.maxDepthExceeded(this.maxDepth);
     }
 
-    // One literal-bounded pattern; the name/default split happens in code
-    // (indexOf), so no quantifier alternation can backtrack
-    // (js/polynomial-redos).
-    const envPattern = /\$\{([^}]+)\}/g;
-
-    return value.replace(envPattern, (match, inner: string) => {
-      const sep = inner.indexOf(':');
-      const varName = sep === -1 ? inner : inner.slice(0, sep);
-      const defaultValue = sep === -1 ? undefined : inner.slice(sep + 1);
-      // Security: Validate variable name to prevent injection
-      if (!this.isValidVariableName(varName)) {
-        throw EnvironmentResolutionError.invalidPattern(match);
+    // Pattern scanning is done with indexOf only - no regular expression can
+    // backtrack here at all (js/polynomial-redos fired on every regex form,
+    // including single-quantifier ones, because the input is library data).
+    let out = '';
+    let cursor = 0;
+    for (;;) {
+      const start = value.indexOf('${', cursor);
+      if (start === -1) {
+        out += value.slice(cursor);
+        break;
       }
-
-      // Security: Check for circular references
-      if (visitedVars.has(varName)) {
-        throw EnvironmentResolutionError.circularReference(varName);
+      const end = value.indexOf('}', start + 2);
+      if (end === -1) {
+        out += value.slice(cursor);
+        break;
       }
-
-      // Get environment variable value
-      const envValue = this.envSource[varName];
-
-      if (envValue === undefined) {
-        if (defaultValue !== undefined) {
-          // Recursively resolve default value
-          const newVisited = new Set(visitedVars);
-          newVisited.add(varName);
-          return this.resolve(defaultValue, newVisited, depth + 1);
-        } else if (this.strict) {
-          throw EnvironmentResolutionError.missingVariable(varName);
-        } else {
-          return match; // Return original pattern if not strict
-        }
+      const match = value.slice(start, end + 1);
+      const inner = value.slice(start + 2, end);
+      if (inner.length === 0) {
+        // An empty ${} is not a variable pattern; keep it verbatim.
+        out += value.slice(cursor, end + 1);
+        cursor = end + 1;
+        continue;
       }
+      const resolved = this.resolveOne(match, inner, visitedVars, depth);
+      out += value.slice(cursor, start) + resolved;
+      cursor = end + 1;
+    }
+    return out;
+  }
 
-      // Recursively resolve the environment variable value
-      const newVisited = new Set(visitedVars);
-      newVisited.add(varName);
-      return this.resolve(envValue, newVisited, depth + 1);
-    });
+  /**
+   * Resolves a single `${NAME[:default]}` occurrence (inner excludes braces).
+   * @internal
+   */
+  private resolveOne(
+    match: string,
+    inner: string,
+    visitedVars: Set<string>,
+    depth: number,
+  ): string {
+    const sep = inner.indexOf(':');
+    const varName = sep === -1 ? inner : inner.slice(0, sep);
+    const defaultValue = sep === -1 ? undefined : inner.slice(sep + 1);
+    // Security: Validate variable name to prevent injection
+    if (!this.isValidVariableName(varName)) {
+      throw EnvironmentResolutionError.invalidPattern(match);
+    }
+
+    // Security: Check for circular references
+    if (visitedVars.has(varName)) {
+      throw EnvironmentResolutionError.circularReference(varName);
+    }
+
+    // Get environment variable value
+    const envValue = this.envSource[varName];
+
+    if (envValue === undefined) {
+      if (defaultValue !== undefined) {
+        // Recursively resolve default value
+        const newVisited = new Set(visitedVars);
+        newVisited.add(varName);
+        return this.resolve(defaultValue, newVisited, depth + 1);
+      } else if (this.strict) {
+        throw EnvironmentResolutionError.missingVariable(varName);
+      } else {
+        return match; // Return original pattern if not strict
+      }
+    }
+
+    // Recursively resolve the environment variable value
+    const newVisited = new Set(visitedVars);
+    newVisited.add(varName);
+    return this.resolve(envValue, newVisited, depth + 1);
   }
 
   /**
@@ -150,8 +184,16 @@ export class EnvVarPatternResolver {
    * @public
    */
   public static containsPattern(value: string): boolean {
-    // Single literal-bounded pattern; no quantifier nesting (see resolveValue).
-    return /\$\{[^}]+\}/.test(value);
+    // indexOf scan (no regex): true iff a non-empty ${...} exists.
+    let from = 0;
+    for (;;) {
+      const start = value.indexOf('${', from);
+      if (start === -1) return false;
+      const end = value.indexOf('}', start + 2);
+      if (end > start + 2) return true;
+      if (end === -1) return false;
+      from = end + 1;
+    }
   }
 
   /**
